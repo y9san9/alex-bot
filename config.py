@@ -5,4 +5,4 @@ from config_source import *
 
 API_KEY: int = api_key
 API_HASH: str = api_hash
-SESSION_NAME = "C+P userbot"
+SESSION_NAME = "main_session"

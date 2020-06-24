@@ -6,8 +6,8 @@ from config import *
 
 
 class BotController:
-    def __init__(self):
-        self.client = TelegramClient(SESSION_NAME, API_KEY, API_HASH)
+    def __init__(self, session_name=SESSION_NAME):
+        self.client = TelegramClient(session_name, API_KEY, API_HASH)
 
     def __enter__(self):
         self.client.__enter__()

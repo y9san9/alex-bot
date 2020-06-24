@@ -1,5 +1,5 @@
 /venv/
 /config_source.py
-/app/storage.json
-/app/*.session
-/app/*.session-journal
+/app/examples/*.session
+/app/examples/*.session-journal
+/app/examples/storage.json

@@ -1,3 +1,5 @@
+import asyncio
+
 from app.controller import BotController
 import logging
 
