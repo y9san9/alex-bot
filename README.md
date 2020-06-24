@@ -1,5 +1,5 @@
 # CopyPasteUserbot
-Setup telegram api in ```config.py``` and then run it with ```main.py```
+Setup telegram api in ```config.py``` and then run it with ```app/main.py```
 ## Available commands
 - `.dump` - dumps a message reply
 - `.user` {userID} - dumps a user by id
