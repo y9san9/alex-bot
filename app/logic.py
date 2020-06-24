@@ -55,7 +55,7 @@ async def paste_named(message: Message, client: TelegramClient, name: str):
         await client.send_message(message.to_id, msg[0])
 
 
-async def coped_list(message: Message, client: TelegramClient, args: List[str]):
+async def copied_list(message: Message, client: TelegramClient, args: List[str]):
     await message.reply(
         "\n".join(["- " + x[0] for x in storage.read_object().items()])
     )
@@ -81,7 +81,7 @@ handlers = {
     ".copy": copy,      ".c": copy,     ".+": copy,
     ".paste": paste,    ".p": paste,    ".=": paste,
     ".remove": remove,  ".r": remove,   ".-": remove,
-    ".all": coped_list
+    ".all": copied_list
 }
 
 
