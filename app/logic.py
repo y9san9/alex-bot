@@ -42,7 +42,7 @@ async def paste(message: Message, client: TelegramClient, args: List[str]):
             await message.edit("No message copied")
         else:
             await message.delete()
-            await client.send_message(message.to_id, copied)
+            await client.send_message(message.to_id, copied, reply_to=message.reply_to_msg_id)
     else:
         await paste_named(message, client, args[0])
 
@@ -52,7 +52,7 @@ async def paste_named(message: Message, client: TelegramClient, name: str):
     await message.delete()
     if name in data:
         msg = await client.get_messages("me", min_id=data[name] - 1, max_id=data[name] + 1)
-        await client.send_message(message.to_id, msg[0])
+        await client.send_message(message.to_id, msg[0], reply_to=message.reply_to_msg_id)
 
 
 async def copied_list(message: Message, client: TelegramClient, args: List[str]):
