@@ -1,10 +1,12 @@
 import json
 import os
+from pprint import PrettyPrinter
 from typing import Union, List
 
 from telethon import TelegramClient
+from telethon.tl import TLObject
 from telethon.tl.custom import Message
-from telethon.tl.types import PeerUser
+from telethon.tl.types import PeerUser, User
 
 from utils.file_utils import File
 
@@ -64,24 +66,43 @@ async def copied_list(message: Message, client: TelegramClient, args: List[str])
 async def remove(message: Message, client: TelegramClient, args: List[str]):
     global copied
     if len(args) == 0:
-        await message.reply("Removed buffer")
+        await message.edit("Removed buffer")
         copied = None
     else:
         name = args[0]
         data = storage.read_object()
         if name in data:
-            await message.reply(f"Removed {name}")
+            await message.edit(f"Removed {name}")
             del data[name]
             storage.write_object(data)
         else:
-            await message.reply(f"Cannot find key {name}")
+            await message.edit(f"Cannot find key {name}")
+
+
+async def user(message: Message, client: TelegramClient, args: List[str]):
+    if len(args) == 0 or not args[0].isnumeric():
+        await message.edit("Id not selected")
+    else:
+        try:
+            user_info = await client.get_entity(PeerUser(int(args[0])))
+            await message.edit(f"[User](tg://user?id={args[0]}):"
+                               f"\n`{user_info.to_json(indent=4)}`")
+        except ValueError:
+            await message.edit("User not found")
+
+
+async def dump(message: Message, client: TelegramClient, args: List[str]):
+    reply = await message.get_reply_message()
+    await message.edit(f"`{reply.to_json(indent=4)}`")
 
 
 handlers = {
     ".copy": copy,      ".c": copy,     ".+": copy,
     ".paste": paste,    ".p": paste,    ".=": paste,
     ".remove": remove,  ".r": remove,   ".-": remove,
-    ".all": copied_list
+    ".all": copied_list,
+    ".user": user,
+    ".dump": dump
 }
 
 
