@@ -1,22 +1,21 @@
-import json
 import os
-from pprint import PrettyPrinter
-from typing import Union, List
-
-from telethon import TelegramClient
-from telethon.tl import TLObject
+from typing import Union, List, Dict
 from telethon.tl.custom import Message
 from telethon.tl.types import PeerUser, User
 
 from utils.file_utils import File
 
-storage = File(os.path.join("storage.json"))
-storage.refresh("{}")
 
-copied: Union[Message, None] = None
+def storage(session: str) -> File:
+    f = File(os.path.join(f"{session}_storage.json"))
+    f.refresh("{}")
+    return f
 
 
-async def copy(message: Message, client: TelegramClient, args: List[str]):
+copied: Dict[str, Message] = {}
+
+
+async def copy(session: str, message: Message, args: List[str]):
     global copied
 
     msg = await message.get_reply_message()
@@ -25,73 +24,73 @@ async def copy(message: Message, client: TelegramClient, args: List[str]):
     else:
         await message.delete()
         if len(args) == 0:
-            copied = msg
+            copied[session] = msg
         else:
-            await copy_named(msg, client, args[0])
+            await copy_named(session, msg, args[0])
 
 
-async def copy_named(message: Message, client: TelegramClient, name: str):
-    msg: Message = await client.send_message("me", message)
-    data = storage.read_object()
+async def copy_named(session: str, message: Message, name: str):
+    msg: Message = await message.client.send_message("me", message)
+    data = storage(session).read_object()
     data[name] = msg.id
-    storage.write_object(data)
+    storage(session).write_object(data)
 
 
-async def paste(message: Message, client: TelegramClient, args: List[str]):
+async def paste(session: str, message: Message, args: List[str]):
     if len(args) == 0:
         global copied
-        if copied is None:
-            await message.edit("No message copied")
-        else:
+        if session in copied:
             await message.delete()
-            await client.send_message(message.to_id, copied, reply_to=message.reply_to_msg_id)
+            await message.client.send_message(message.to_id, copied[session], reply_to=message.reply_to_msg_id)
+        else:
+            await message.edit("No message copied")
     else:
-        await paste_named(message, client, args[0])
+        await paste_named(session, message, args[0])
 
 
-async def paste_named(message: Message, client: TelegramClient, name: str):
-    data = storage.read_object()
+async def paste_named(session: str, message: Message, name: str):
+    data = storage(session).read_object()
     await message.delete()
     if name in data:
-        msg = await client.get_messages("me", min_id=data[name] - 1, max_id=data[name] + 1)
-        await client.send_message(message.to_id, msg[0], reply_to=message.reply_to_msg_id)
+        msg = await message.client.get_messages("me", min_id=data[name] - 1, max_id=data[name] + 1)
+        await message.client.send_message(message.to_id, msg[0], reply_to=message.reply_to_msg_id)
 
 
-async def copied_list(message: Message, client: TelegramClient, args: List[str]):
+async def copied_list(session: str, message: Message, _: List[str]):
     await message.reply(
-        "\n".join(["- " + x[0] for x in storage.read_object().items()])
+        "\n".join(["- " + x[0] for x in storage(session).read_object().items()])
     )
 
 
-async def remove(message: Message, client: TelegramClient, args: List[str]):
+async def remove(session: str, message: Message, args: List[str]):
     global copied
     if len(args) == 0:
         await message.edit("Removed buffer")
-        copied = None
+        del copied[session]
     else:
         name = args[0]
-        data = storage.read_object()
+        data = storage(session).read_object()
         if name in data:
             await message.edit(f"Removed {name}")
             del data[name]
-            storage.write_object(data)
+            storage(session).write_object(data)
         else:
             await message.edit(f"Cannot find key {name}")
 
 
-async def user(message: Message, client: TelegramClient, args: List[str]):
+async def user(session: str, message: Message, args: List[str]):
     if len(args) == 0 or not args[0].isnumeric():
         await message.edit("Id not selected")
     else:
         try:
-            user_info = await client.get_entity(PeerUser(int(args[0])))
+            user_info = await message.client.get_entity(PeerUser(int(args[0])))
             await message.edit(f"[User](tg://user?id={args[0]}):"
                                f"\n`{user_info.to_json(indent=4)}`")
         except ValueError:
             await message.edit("User not found")
 
 
-async def dump(message: Message, client: TelegramClient, args: List[str]):
+async def dump(session: str, message: Message, args: List[str]):
     reply = await message.get_reply_message()
     await message.edit(f"`{reply.to_json(indent=4)}`")
 
@@ -106,7 +105,7 @@ handlers = {
 }
 
 
-async def handle_out_message(message: Message, client: TelegramClient):
+async def handle_out_message(session: str, message: Message):
     args = message.text.split(" ")
     command = args[0]
-    await handlers[command](message, client, args[1:]) if command in handlers else None
+    await handlers[command](session, message, args[1:]) if command in handlers else None

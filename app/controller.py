@@ -8,6 +8,7 @@ from config import *
 class BotController:
     def __init__(self, session_name=SESSION_NAME):
         self.client = TelegramClient(session_name, API_KEY, API_HASH)
+        self.session = session_name
 
     def __enter__(self):
         self.client.__enter__()
@@ -21,7 +22,7 @@ class BotController:
         async def message(event: NewMessage.Event):
             msg = event.message
             if msg.out:
-                await handle_out_message(msg, self.client)
+                await handle_out_message(self.session, msg)
 
         self.client.start()
         self.client.run_until_disconnected()

@@ -2,4 +2,4 @@
 /config_source.py
 /app/examples/*.session
 /app/examples/*.session-journal
-/app/examples/storage.json
+/app/examples/*.json
