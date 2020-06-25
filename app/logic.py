@@ -1,7 +1,7 @@
 import os
-from typing import Union, List, Dict
+from typing import List, Dict
 from telethon.tl.custom import Message
-from telethon.tl.types import PeerUser, User
+from telethon.tl.types import PeerUser
 
 from utils.file_utils import File
 

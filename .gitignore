@@ -3,3 +3,4 @@
 /app/examples/*.session
 /app/examples/*.session-journal
 /app/examples/*.json
+/.idea/
