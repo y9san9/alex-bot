@@ -4,5 +4,5 @@ from config_source import *
 
 
 API_KEY: int = api_key
-API_HASH: str = api_hash
+API_HASH: str = "api_hash"
 SESSION_NAME = "main_session"

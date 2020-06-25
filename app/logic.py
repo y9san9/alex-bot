@@ -1,12 +1,9 @@
-import json
 import os
-from pprint import PrettyPrinter
 from typing import Union, List
 
 from telethon import TelegramClient
-from telethon.tl import TLObject
 from telethon.tl.custom import Message
-from telethon.tl.types import PeerUser, User
+from telethon.tl.types import PeerUser
 
 from utils.file_utils import File
 
@@ -57,13 +54,13 @@ async def paste_named(message: Message, client: TelegramClient, name: str):
         await client.send_message(message.to_id, msg[0], reply_to=message.reply_to_msg_id)
 
 
-async def copied_list(message: Message, client: TelegramClient, args: List[str]):
+async def copied_list(message: Message, *_):
     await message.reply(
         "\n".join(["- " + x[0] for x in storage.read_object().items()])
     )
 
 
-async def remove(message: Message, client: TelegramClient, args: List[str]):
+async def remove(message: Message, _, args: List[str]):
     global copied
     if len(args) == 0:
         await message.edit("Removed buffer")
@@ -91,7 +88,7 @@ async def user(message: Message, client: TelegramClient, args: List[str]):
             await message.edit("User not found")
 
 
-async def dump(message: Message, client: TelegramClient, args: List[str]):
+async def dump(message: Message, *_):
     reply = await message.get_reply_message()
     await message.edit(f"`{reply.to_json(indent=4)}`")
 

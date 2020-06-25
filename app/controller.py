@@ -1,8 +1,8 @@
 from telethon.events import NewMessage
-from telethon.sync import TelegramClient, events
+from telethon.sync import TelegramClient
 
 from app.logic import handle_out_message
-from config import *
+from config import SESSION_NAME, API_KEY, API_HASH
 
 
 class BotController:
@@ -17,11 +17,9 @@ class BotController:
         self.client.__exit__(exc_type, exc_val, exc_tb)
 
     def start(self):
-        @self.client.on(NewMessage)
+        @self.client.on(NewMessage(outgoing=True))
         async def message(event: NewMessage.Event):
-            msg = event.message
-            if msg.out:
-                await handle_out_message(msg, self.client)
+            await handle_out_message(event.message, self.client)
 
         self.client.start()
         self.client.run_until_disconnected()
