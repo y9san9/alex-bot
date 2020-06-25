@@ -1,8 +1,8 @@
 # Remove this import and enter data manually or create
 # config_source.py and define api_key: int, api_hash: str
-from config_source import *
+from config_source import api_key, api_hash
 
 
 API_KEY: int = api_key
-API_HASH: str = "api_hash"
+API_HASH: str = api_hash
 SESSION_NAME = "main_session"
