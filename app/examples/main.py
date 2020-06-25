@@ -1,10 +1,8 @@
-import asyncio
-
-from app.controller import BotController
 import logging
 
+from app.controller import BotController
 
-logging.basicConfig(format='[5s/%(asctime)s] %(name)s: %(message)s',
+logging.basicConfig(format="[5s/%(asctime)s] %(name)s: %(message)s",
                     level=logging.INFO)
 
 

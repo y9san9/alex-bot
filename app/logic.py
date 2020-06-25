@@ -78,7 +78,7 @@ async def remove(session: str, message: Message, args: List[str]):
             await message.edit(f"Cannot find key {name}")
 
 
-async def user(session: str, message: Message, args: List[str]):
+async def user(_, message: Message, args: List[str]):
     if len(args) == 0 or not args[0].isnumeric():
         await message.edit("Id not selected")
     else:
@@ -90,7 +90,7 @@ async def user(session: str, message: Message, args: List[str]):
             await message.edit("User not found")
 
 
-async def dump(session: str, message: Message, args: List[str]):
+async def dump(_, message: Message, __):
     reply = await message.get_reply_message()
     await message.edit(f"`{reply.to_json(indent=4)}`")
 
