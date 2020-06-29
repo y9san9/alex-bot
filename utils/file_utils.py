@@ -23,6 +23,10 @@ class File:
         with open(self.filename, 'r') as file:
             return file.read()
 
+    def bytes(self) -> bytes:
+        with open(self.filename, 'rb') as file:
+            return file.read()
+
     def write_object(self, obj):
         self.write(json.dumps(obj))
 

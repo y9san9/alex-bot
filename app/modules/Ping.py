@@ -5,7 +5,7 @@ from app.Module import command, module, Module
 
 @command(".ping")
 async def pong(message: Message, _):
-    await message.edit("Pong!")
+    await message.edit("Пинг!")
 
 
 @module

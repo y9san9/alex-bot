@@ -1,6 +1,7 @@
 import os
 from typing import List
 
+from telethon import TelegramClient
 from telethon.tl.custom import Message
 
 from app.Module import module, Module, command
@@ -30,6 +31,8 @@ async def module_operation(message: Message, args: List[str]):
         await remove(base, message, args)
     if operation == "list":
         await list_modules(base, message, args)
+    if operation == "get":
+        await get(base, message, args)
 
 
 async def add_module(base: str, message: Message, args: List[str]):
@@ -79,6 +82,24 @@ async def remove(base: str, message: Message, args: List[str]):
     await message.edit(base + f"Removed {name}")
 
 
+async def get(base: str, message: Message, args: List[str]):
+
+    if len(args) < 2:
+        await message.edit(base + "Provide module filename to get")
+        return
+    name = args[1]
+
+    file = File(f"../modules/{name}.py")
+    if not file.exists():
+        await message.edit(base + f"Cannot find module file {name}.py")
+        return
+
+    client: TelegramClient = message.client
+    file = await client.upload_file(file.bytes(), file_name=f"{name}.py")
+    await message.delete()
+    await client.send_message(message.to_id, base + f"{name} sources:", file=file)
+
+
 async def list_modules(base: str, message: Message, _):
     await message.edit(base + "Installed module files:\n" +
                        "\n".join(f"- {x}" for x in os.listdir("../modules") if not x.startswith("__")))
@@ -90,5 +111,6 @@ class Includer(Module):
     def help() -> str:
         return "Module includer\n" \
                "- `.module add {module_name}` + attached file with source - add new module file\n" \
-               "- `.module .remove {module_name}` - remove module file by name\n" \
+               "- `.module remove {module_name}` - remove module file by name\n" \
+               "- `.module get {module_name}` - get module sources by name\n" \
                "- `.module list` - list module files"
