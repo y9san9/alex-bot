@@ -88,4 +88,7 @@ async def list_modules(base: str, message: Message, _):
 class Includer(Module):
     @staticmethod
     def help() -> str:
-        return "Module includer"
+        return "Module includer\n" \
+               "- `.module add {module_name}` + attached file with source - add new module file\n" \
+               "- `.module .remove {module_name}` - remove module file by name\n" \
+               "- `.module list` - list module files"

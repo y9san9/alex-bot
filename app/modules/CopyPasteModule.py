@@ -92,4 +92,4 @@ class CopyPaste(Module):
         data = self.storage.read_object()
         str_list = "\n".join(f"- {x[0]}" for x in data.items())
         str_list = "No stored copies yet" if str_list == "" else str_list
-        await message.edit("`.all`:\n" + str_list)
+        await message.edit("`.copied`:\n" + str_list)

@@ -28,6 +28,11 @@ async def run(message: Message, _):
     await message.edit(message.text + "\n" + str(os.system(" ".join(message.text.split(" ")[1:]))))
 
 
+@command(".me")
+async def me(message: Message, _):
+    await message.edit(f"`{message.text}`:\nUserbot available on [github](https://github.com/y9san9/alex-bot)")
+
+
 @module
 class Debug(Module):
     @staticmethod
@@ -35,4 +40,5 @@ class Debug(Module):
         return "Debug module:\n" \
                "- `.dump` with message reply to dump it\n" \
                "- `.py {code}` - execute python code\n" \
-               "- `.run {code}` - execute os code\n"
+               "- `.run {code}` - execute os code\n" \
+               "- `.me` - get info about userbot"
